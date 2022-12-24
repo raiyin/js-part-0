@@ -1,11 +1,11 @@
 // Test utils
 
-const testBlock = (name) => {
+const testBlock = (name: string): void => {
     console.groupEnd();
     console.group(`# ${name}\n`);
 };
 
-const areEqual = (a, b) => {
+const areEqual = (a: string | boolean | any[], b: string | boolean | any[]): boolean => {
     if (Array.isArray(a) && Array.isArray(b)) {
         return a.length == b.length && a.every((element, index) => areEqual(element, b[index]));
     }
@@ -15,7 +15,9 @@ const areEqual = (a, b) => {
     // Remember: [] !== []
 };
 
-const test = (whatWeTest, actualResult, expectedResult) => {
+const test = (
+    whatWeTest: string, actualResult: string | boolean | any[],
+    expectedResult: string | boolean | any[]): void => {
     if (areEqual(actualResult, expectedResult)) {
         console.log(`[OK] ${whatWeTest}\n`);
     } else {
@@ -30,22 +32,22 @@ const test = (whatWeTest, actualResult, expectedResult) => {
 
 // Functions
 
-const getType = (value) => {
+const getType = (value: string | number | boolean | Function | object | null | undefined | any[]): string => {
     // Return string with a native JS type of value
     return typeof value;
 };
 
-const getTypesOfItems = (arr) => {
+const getTypesOfItems = (arr: any[]): any[] => {
     // Return array with types of items of given array
     return arr.map((item) => getType(item));
 };
 
-const allItemsHaveTheSameType = (arr) => {
+const allItemsHaveTheSameType = (arr: any[]): boolean => {
     // Return true if all items of array have the same type
     return new Set(arr.map((item) => getType(item))).size == 1;
 };
 
-const getRealType = (value) => {
+const getRealType = (value: any): string => {
     // Return string with a “real” type of value.
     // For example:
     //     typeof new Date()       // 'object'
@@ -55,7 +57,7 @@ const getRealType = (value) => {
     // Use typeof, instanceof and some magic. It's enough to have
     // 12-13 unique types but you can find out in JS even more :)
 
-    let typeOfValue = typeof value;
+    let typeOfValue: string = typeof value;
     if (typeOfValue === 'number') {
         if (isNaN(value)) return 'NaN';
         else if (Math.abs(value) === Infinity)
@@ -97,18 +99,18 @@ const getRealType = (value) => {
     }
 };
 
-const getRealTypesOfItems = (arr) => {
+const getRealTypesOfItems = (arr: any[]): string[] => {
     // Return array with real types of items of given array
     return arr.map((item) => getRealType(item));
 };
 
-const everyItemHasAUniqueRealType = (arr) => {
+const everyItemHasAUniqueRealType = (arr: any[]): boolean => {
     // Return true if there are no items in array
     // with the same real type
     return new Set(arr.map((item) => getRealType(item))).size === arr.length;
 };
 
-function compareFn(a, b) {
+function compareFn(a: number[], b: number[]): number {
     if (a[0] < b[0]) {
         return -1;
     }
@@ -120,7 +122,7 @@ function compareFn(a, b) {
 }
 
 
-const countRealTypes = (arr) => {
+const countRealTypes = (arr: any[]): any[] => {
     // Return an array of arrays with a type and count of items
     // with this type in the input array, sorted by type.
     // Like an Object.entries() result: [['boolean', 3], ['string', 5]]
@@ -168,6 +170,7 @@ test(
 
 test(
     'Values like a number',
+    // @ts-expect-error: https://github.com/microsoft/TypeScript/issues/27910
     allItemsHaveTheSameType([123, 123 / 'a', 1 / 0]),
     true,
     // What the result?
@@ -184,15 +187,16 @@ const knownTypes = [
     'this is a string',
     [1, 1, 2, 3, 5, 8],
     {},
-    function (a, b) {
+    function (a: number, b: number) {
         return a * b;
     },
     undefined,
     'str'.match(/[aeiou]/gi),
+    // @ts-expect-error: https://github.com/microsoft/TypeScript/issues/27910
     123 / 'a',
     1 / 0,
     new Date(),
-    new RegExp(),
+    new RegExp('\d{4}'),
     new Set(),
     new Map(),
     Symbol('abc'),
@@ -252,6 +256,7 @@ test(
 
 test(
     'Two values have the same type',
+    // @ts-expect-error: https://github.com/microsoft/TypeScript/issues/27910
     everyItemHasAUniqueRealType([true, 123, '123' === 123]),
     false,
 );
@@ -310,6 +315,6 @@ test(
 );
 test(
     'Items have some the diff types',
-    allItemsHaveTheSameType([11, new String(), new Date(), new RegExp()]),
+    allItemsHaveTheSameType([11, new String(), new Date(), new RegExp('\d{4}')]),
     false,
 );
