@@ -5,7 +5,7 @@ const testBlock = (name: string): void => {
     console.group(`# ${name}\n`);
 };
 
-const areEqual = (a: string | boolean | unknown[], b: string | boolean | unknown[]): boolean => {
+const areEqual = (a: unknown | unknown[], b: unknown | unknown[]): boolean => {
     if (Array.isArray(a) && Array.isArray(b)) {
         return a.length == b.length && a.every((element, index) => areEqual(element, b[index]));
     }
@@ -16,8 +16,8 @@ const areEqual = (a: string | boolean | unknown[], b: string | boolean | unknown
 };
 
 const test = (
-    whatWeTest: string, actualResult: string | boolean | unknown[],
-    expectedResult: string | boolean | unknown[]): void => {
+    whatWeTest: string, actualResult: unknown | unknown[],
+    expectedResult: unknown | unknown[]): void => {
     if (areEqual(actualResult, expectedResult)) {
         console.log(`[OK] ${whatWeTest}\n`);
     } else {
@@ -32,7 +32,7 @@ const test = (
 
 // Functions
 
-const getType = (value: string | number | boolean | Function | object | null | unknown | undefined | unknown[]): string => {
+const getType = (value: unknown | unknown[]): string => {
     // Return string with a native JS type of value
     return typeof value;
 };
