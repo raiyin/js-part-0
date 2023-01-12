@@ -5,7 +5,7 @@ const testBlock = (name: string): void => {
     console.group(`# ${name}\n`);
 };
 
-const areEqual = (a: string | boolean | any[], b: string | boolean | any[]): boolean => {
+const areEqual = (a: string | boolean | unknown[], b: string | boolean | unknown[]): boolean => {
     if (Array.isArray(a) && Array.isArray(b)) {
         return a.length == b.length && a.every((element, index) => areEqual(element, b[index]));
     }
@@ -16,8 +16,8 @@ const areEqual = (a: string | boolean | any[], b: string | boolean | any[]): boo
 };
 
 const test = (
-    whatWeTest: string, actualResult: string | boolean | any[],
-    expectedResult: string | boolean | any[]): void => {
+    whatWeTest: string, actualResult: string | boolean | unknown[],
+    expectedResult: string | boolean | unknown[]): void => {
     if (areEqual(actualResult, expectedResult)) {
         console.log(`[OK] ${whatWeTest}\n`);
     } else {
@@ -32,22 +32,22 @@ const test = (
 
 // Functions
 
-const getType = (value: string | number | boolean | Function | object | null | undefined | any[]): string => {
+const getType = (value: string | number | boolean | Function | object | null | unknown | undefined | unknown[]): string => {
     // Return string with a native JS type of value
     return typeof value;
 };
 
-const getTypesOfItems = (arr: any[]): any[] => {
+const getTypesOfItems = (arr: unknown[]): unknown[] => {
     // Return array with types of items of given array
     return arr.map((item) => getType(item));
 };
 
-const allItemsHaveTheSameType = (arr: any[]): boolean => {
+const allItemsHaveTheSameType = (arr: unknown[]): boolean => {
     // Return true if all items of array have the same type
     return new Set(arr.map((item) => getType(item))).size == 1;
 };
 
-const getRealType = (value: any): string => {
+const getRealType = (value: unknown): string => {
     // Return string with a “real” type of value.
     // For example:
     //     typeof new Date()       // 'object'
@@ -59,8 +59,8 @@ const getRealType = (value: any): string => {
 
     let typeOfValue: string = typeof value;
     if (typeOfValue === 'number') {
-        if (isNaN(value)) return 'NaN';
-        else if (Math.abs(value) === Infinity)
+        if (Number.isNaN(value)) return 'NaN';
+        else if (!Number.isFinite(value))
             return 'Infinity';
         else return 'number';
     } else if (typeOfValue === 'string')
@@ -99,12 +99,12 @@ const getRealType = (value: any): string => {
     }
 };
 
-const getRealTypesOfItems = (arr: any[]): string[] => {
+const getRealTypesOfItems = (arr: unknown[]): string[] => {
     // Return array with real types of items of given array
     return arr.map((item) => getRealType(item));
 };
 
-const everyItemHasAUniqueRealType = (arr: any[]): boolean => {
+const everyItemHasAUniqueRealType = (arr: unknown[]): boolean => {
     // Return true if there are no items in array
     // with the same real type
     return new Set(arr.map((item) => getRealType(item))).size === arr.length;
@@ -122,7 +122,7 @@ function compareFn(a: number[], b: number[]): number {
 }
 
 
-const countRealTypes = (arr: any[]): any[] => {
+const countRealTypes = (arr: unknown[]): unknown[] => {
     // Return an array of arrays with a type and count of items
     // with this type in the input array, sorted by type.
     // Like an Object.entries() result: [['boolean', 3], ['string', 5]]
